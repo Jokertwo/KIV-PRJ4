@@ -1,17 +1,29 @@
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Trida vybira vztvorenou frontu
+ * 
+ * @author Jokertwo
+ *
+ */
+
 public class Konzument implements Runnable{
 
 	private final BlockingQueue<String> fronta;
 	
+	//konstruktor
 	public Konzument(BlockingQueue<String> fronta) {
 		this.fronta = fronta;
 	}
 	
 	@Override
 	public void run() {
-		waitt();
+		//pockani nez se aspon trochu naplni fronta
+		//neni uplne nejstatnejsi
+		waitt(10);
+		long startime = System.currentTimeMillis();
 		try{
+			//vybira dokod fronta neni prazdna
 			while(!fronta.isEmpty()){
 				konzumuj(fronta.take(),fronta.size());
 				
@@ -19,16 +31,27 @@ public class Konzument implements Runnable{
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
+		long endtime = System.currentTimeMillis();
+		
+		System.out.println("cas zpracovani je " + (endtime - startime));
 		
 	}
 	
-	public void konzumuj(String radka, int size){
+	/**
+	 * tiskne informaci o poloykach fronty
+	 * @param radka string k tisku
+	 * @param size  vilost dosavadni fronty
+	 */
+	private void konzumuj(String radka, int size){
 		System.out.println(radka + "velikost fronty " + size);
 	}
 	
-	public void waitt(){
+	/**
+	 * zdrzovaci funkce
+	 */
+	private void waitt(int time){
 		try{
-			Thread.sleep(10);
+			Thread.sleep(time);
 		}catch(InterruptedException e){}
 	}
 

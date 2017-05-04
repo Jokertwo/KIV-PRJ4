@@ -19,38 +19,45 @@ public class Read implements Runnable
 	private BufferedReader in;
 	private final BlockingQueue<String> fronta;
 	
-	static public boolean hotovo = false;
 	
-	static public String actual;
-	
-	
+	/**
+	 * kontruktor
+	 * @param jmenoSouboru jmeno souboru ze ktereho se ma cist
+	 * @param fronta fronta kam se budou nactene informace ukladat
+	 */
 	public Read(String jmenoSouboru,BlockingQueue<String> fronta){
 		this.jmenoSouboru = jmenoSouboru;
 		this.fronta = fronta;
 	}
-	static public String getActual(){
-		return actual;
+	
+	@Override
+	public void run(){
+		
+		readFromFile();
 	}
 	
-	public void run(){
+	/**
+	 * cte ze souboru
+	 */
+	private void readFromFile(){
 		String radka;
 		
 		try{
 			fr = new FileReader(jmenoSouboru);
 			in = new BufferedReader(fr);
-			
+			//cte dokud nedojde az na konec souboru
 			while((radka = in.readLine()) != null){
 				
 				try{
+					//ulozi do fronty
 					fronta.put(radka);
 				}
 				catch(InterruptedException e){}
 			}
 			fr.close();
-			hotovo = true;
 		}catch(IOException e){
 			System.err.println(e);
-			hotovo  = true;
 		}
 	}
+	
 }
