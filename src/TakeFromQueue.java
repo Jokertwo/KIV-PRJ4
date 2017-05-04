@@ -7,12 +7,12 @@ import java.util.concurrent.BlockingQueue;
  *
  */
 
-public class Konzument implements Runnable{
+public class TakeFromQueue implements Runnable{
 
 	private final BlockingQueue<String> fronta;
 	
 	//konstruktor
-	public Konzument(BlockingQueue<String> fronta) {
+	public TakeFromQueue(BlockingQueue<String> fronta) {
 		this.fronta = fronta;
 	}
 	

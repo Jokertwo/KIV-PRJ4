@@ -20,7 +20,7 @@ public class Main {
 		Read d = new Read("Data2.txt",q);
 		
 		//trida ktera vybira ulozene veci ze souboru
-		Konzument k = new Konzument(q);
+		TakeFromQueue k = new TakeFromQueue(q);
 		
 		
 		//spustine obou trid
@@ -31,9 +31,9 @@ public class Main {
 		
 		
 		try {
-		    System.out.println("attempt to shutdown executor");
+		    System.out.println(" executor");
 		    ex.shutdown();
-		    ex.awaitTermination(5, TimeUnit.SECONDS);
+		    ex.awaitTermination(1, TimeUnit.SECONDS);
 		}
 		catch (InterruptedException e) {
 		    System.err.println("tasks interrupted");
