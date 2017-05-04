@@ -84,6 +84,8 @@ public class TakeFromQueue implements Callable<Integer>{
 				takeIt(fronta.take());	
 				System.out.println(fronta.size());
 				}
+			//vyresetovat promenou pro pripad opetovneho spusteni
+			Read.done = false;
 			
 		}catch(InterruptedException e){
 			e.printStackTrace();
