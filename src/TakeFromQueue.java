@@ -1,4 +1,5 @@
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
  * Trida vybira vztvorenou frontu
@@ -7,33 +8,144 @@ import java.util.concurrent.BlockingQueue;
  *
  */
 
-public class TakeFromQueue implements Runnable{
+public class TakeFromQueue implements Callable<Integer>{
 
 	private final BlockingQueue<String> fronta;
+	//celkovy soucet
+	private long sum = 0;
+	//nejvyssi nalezeny
+	private int highest = Integer.MIN_VALUE;
+	//nejnizzsi nalezeny
+	private int lower = Integer.MAX_VALUE;
+	//celkovy pocet
+	private int count = 0;
+	//prumer
+	private double average = 0;
+	
+	private boolean done = false;
+	
+	
+	
 	
 	//konstruktor
 	public TakeFromQueue(BlockingQueue<String> fronta) {
 		this.fronta = fronta;
 	}
+	/**
+	 * pocita prumer nactenych polozek
+	 */
+	private void average(){
+		this.average = sum/count; 
+	}
+	
+	/**
+	 * pokud je v argumentu predana nula nastavy
+	 * 'globalni' promenou done na true 
+	 * 
+	 * @param sizeOfQueue int
+	 */
+	private void notYet(int sizeOfQueue){
+		System.out.println(sizeOfQueue + " velikost");
+		if(sizeOfQueue == 0){
+			this.done = true;
+		}
+	}
+	
+	
+	/**
+	 * scita hodnotu pradanou parametrem s 'globalni' promenou sum
+	 * @param actual int 
+	 */
+	private void sum(int actual){
+		this.sum += actual;
+	}
+	/**
+	 * pokud je hodnota predana argumentem vetsi nez 
+	 * v 'globalni' promene highest, ulozi ji do ni
+	 * @param actual int
+	 */
+	private void highest(int actual){
+		if(this.highest < actual){
+			this.highest = actual;
+		}
+	}
+	/**
+	 * pokud je hodnota predana argumentem mensi nez 
+	 * v 'globalni' promene lower, ulozi ji do ni
+	 * @param actual int
+	 */
+	private void lower(int actual){
+		if(this.lower > actual){
+			this.lower = actual;
+		}
+	}
+	/**
+	 * zvysi pocitadlo hodnot
+	 */
+	private void count(){
+		count++;
+	}
 	
 	@Override
-	public void run() {
+	public Integer call() throws Exception {
 		//pockani nez se aspon trochu naplni fronta
 		//neni uplne nejstatnejsi
-		waitt(10);
-		long startime = System.currentTimeMillis();
+		waitt(100);
+		
 		try{
-			//vybira dokod fronta neni prazdna
-			while(!fronta.isEmpty()){
-				konzumuj(fronta.take(),fronta.size());
+			//vybira dokud fronta neni prazdna
+			while(Read.done != true || !fronta.isEmpty()){
+				takeIt(fronta.take());	
 				
 				}
+			
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
-		long endtime = System.currentTimeMillis();
+		notYet(fronta.size());
+		//tisk info
+		printInfo();	
+		return -1;
+	}
+	
+	/**
+	 * tisk informaci o 'globalnich' promenych
+	 */
+	private void printInfo(){
+		System.out.println("Soucet je " + this.sum);
+		System.out.println("Prumer je " + this.average);
+		System.out.println("Nejvyssi cislo je " + this.highest);
+		System.out.println("Nejnizsi cislo je " + this.lower);
+		System.out.println("Celkove bylo cisel " + this.count);
+	}
+	
+	/**
+	 * provede nekolik atomickych operaci s kazdym vybranym prvkem
+	 * 
+	 * @param stack string
+	 */
+	private void takeIt(String stack){
+		int actual;
 		
-		System.out.println("cas zpracovani je " + (endtime - startime));
+		try{
+			actual = Integer.parseInt(stack);
+			//soucet
+			sum(actual);
+			//nejvyssi
+			highest(actual);
+			//nejnizsi
+			lower(actual);
+			//pocet
+			count();
+			//prumer
+			average();
+			
+			 
+			
+		}catch(NumberFormatException e){
+			System.err.println("Neni to cislo");
+		}
+		
 		
 	}
 	
@@ -54,5 +166,8 @@ public class TakeFromQueue implements Runnable{
 			Thread.sleep(time);
 		}catch(InterruptedException e){}
 	}
-
+	///////////////////////////////////////GETRY/////////////////////////////////////////////
+	public boolean getDone(){
+		return this.done;
+	}
 }

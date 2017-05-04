@@ -18,6 +18,7 @@ public class Read implements Runnable
 	private FileReader fr;
 	private BufferedReader in;
 	private final BlockingQueue<String> fronta;
+	public static boolean done = false;
 	
 	
 	/**
@@ -54,6 +55,7 @@ public class Read implements Runnable
 				}
 				catch(InterruptedException e){}
 			}
+			done = true;
 			fr.close();
 		}catch(IOException e){
 			System.err.println(e);
