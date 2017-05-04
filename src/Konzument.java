@@ -10,18 +10,26 @@ public class Konzument implements Runnable{
 	
 	@Override
 	public void run() {
+		waitt();
 		try{
-			while(Read.hotovo == false || fronta.isEmpty()){
-				konzumuj(fronta.take());
-			}
+			while(!fronta.isEmpty()){
+				konzumuj(fronta.take(),fronta.size());
+				
+				}
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
 		
 	}
 	
-	public void konzumuj(String radka){
-		System.out.println(radka);
+	public void konzumuj(String radka, int size){
+		System.out.println(radka + "velikost fronty " + size);
+	}
+	
+	public void waitt(){
+		try{
+			Thread.sleep(10);
+		}catch(InterruptedException e){}
 	}
 
 }
