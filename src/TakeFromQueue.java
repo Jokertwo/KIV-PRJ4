@@ -88,15 +88,12 @@ public class TakeFromQueue implements Callable<Integer>{
 	
 	@Override
 	public Integer call() throws Exception {
-		//pockani nez se aspon trochu naplni fronta
-		//neni uplne nejstatnejsi
-		waitt(100);
+		
 		
 		try{
-			//vybira dokud fronta neni prazdna
+			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
 				takeIt(fronta.take());	
-				
 				}
 			
 		}catch(InterruptedException e){
