@@ -22,7 +22,6 @@ public class TakeFromQueue implements Callable<Integer>{
 	//prumer
 	private double average = 0;
 	
-	private boolean done = false;
 	
 	
 	
@@ -38,18 +37,7 @@ public class TakeFromQueue implements Callable<Integer>{
 		this.average = sum/count; 
 	}
 	
-	/**
-	 * pokud je v argumentu predana nula nastavy
-	 * 'globalni' promenou done na true 
-	 * 
-	 * @param sizeOfQueue int
-	 */
-	private void notYet(int sizeOfQueue){
-		System.out.println(sizeOfQueue + " velikost");
-		if(sizeOfQueue == 0){
-			this.done = true;
-		}
-	}
+	
 	
 	
 	/**
@@ -94,12 +82,13 @@ public class TakeFromQueue implements Callable<Integer>{
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
 				takeIt(fronta.take());	
+				System.out.println(fronta.size());
 				}
 			
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
-		notYet(fronta.size());
+	
 		//tisk info
 		printInfo();	
 		return -1;
@@ -146,25 +135,7 @@ public class TakeFromQueue implements Callable<Integer>{
 		
 	}
 	
-	/**
-	 * tiskne informaci o poloykach fronty
-	 * @param radka string k tisku
-	 * @param size  vilost dosavadni fronty
-	 */
-	private void konzumuj(String radka, int size){
-		System.out.println(radka + "velikost fronty " + size);
-	}
 	
-	/**
-	 * zdrzovaci funkce
-	 */
-	private void waitt(int time){
-		try{
-			Thread.sleep(time);
-		}catch(InterruptedException e){}
-	}
 	///////////////////////////////////////GETRY/////////////////////////////////////////////
-	public boolean getDone(){
-		return this.done;
-	}
+	
 }

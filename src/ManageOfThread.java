@@ -1,5 +1,4 @@
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -10,10 +9,10 @@ public class ManageOfThread {
 	
 	
 	//fonta kam se ukladaji nactene hodnoty ye souboru
-			private	BlockingQueue<String> q = new LinkedBlockingQueue<>();
+			public	BlockingQueue<String> q = new LinkedBlockingQueue<>();
 		
 	//exekutor kde se nastavi pocet jader pouzivanych pro praci 
-			private ExecutorService ex = Executors.newFixedThreadPool(4);
+			public ExecutorService ex = Executors.newFixedThreadPool(4);
 	
 	public void otestuj(){
 		test();
