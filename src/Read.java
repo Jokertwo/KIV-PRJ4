@@ -1,32 +1,32 @@
 
-
-
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 /**
- * trida obstaravající ctení ze souboru
+ * trida obstaravajici cteni ze souboru
  * jmeno souboru se predava pri vytvareni objektu
  * 
  * @author Jokertwo
  * 
  */
 
-public class Read extends Thread
+public class Read implements Runnable
 {
 	private String jmenoSouboru = new String();
 	private FileReader fr;
 	private BufferedReader in;
+	private final BlockingQueue<String> fronta;
 	
 	static public boolean hotovo = false;
 	
 	static public String actual;
 	
 	
-	public Read(String jmenoSouboru){
+	public Read(String jmenoSouboru,BlockingQueue<String> fronta){
 		this.jmenoSouboru = jmenoSouboru;
+		this.fronta = fronta;
 	}
 	static public String getActual(){
 		return actual;
@@ -40,9 +40,9 @@ public class Read extends Thread
 			in = new BufferedReader(fr);
 			
 			while((radka = in.readLine()) != null){
-				actual = radka;
+				
 				try{
-					Thread.sleep(10);
+					fronta.put(radka);
 				}
 				catch(InterruptedException e){}
 			}
