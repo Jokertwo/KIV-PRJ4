@@ -5,7 +5,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+
+
 public class ManageOfThread {
+	
+	
+	
+	
+	
 	
 	
 	//fonta kam se ukladaji nactene hodnoty ye souboru
@@ -16,21 +23,28 @@ public class ManageOfThread {
 	
 	public void otestuj(){
 		test();
+		
 		finish();
 	}
 	
 	public void test(){
-		//trida ktera cte ze souboru
+				//trida ktera cte ze souboru
 				Read d = new Read("Data2.txt",q);
 				
 				//trida ktera vybira ulozene veci ze souboru
 				TakeFromQueue k = new TakeFromQueue(q);
 				
-				//spustine obou trid
+			
+				
+				//spusteni nacitani ze souboru
 				ex.execute(d);
 				
+				
 				//spusteni tridy implementujici callable
+				//konzument informaci ve fronte
 				Future<Integer> future2 = ex.submit(k);
+				
+				
 				
 				//cekani na navratovou hodnotu
 				//nacteni cele fronty
@@ -40,8 +54,14 @@ public class ManageOfThread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				q.clear();
 	}
 	
+	
+	
+	/**
+	 * ukonci bezici vlakna
+	 */
 	public void finish(){
 		try {
 		    System.out.println("attempt to shutdown executor");
@@ -60,4 +80,22 @@ public class ManageOfThread {
 		}
 	}
 
+	
+	
+	
+	public void setHight(TakeFromQueue take){
+		Gui.big.setText(Gui.HIGHEST + take.getHigh());
+	}
+	public void setLow(TakeFromQueue take){
+		Gui.big.setText(Gui.LOWEST + take.getLow());
+	}
+	public void setAver(TakeFromQueue take){
+		Gui.aver.setText(Gui.AVERAGE + take.getAver());
+	}
+	public void setCount(TakeFromQueue take){
+		Gui.count.setText(Gui.COUNT + take.getCount());
+	}
+	public void setSum(TakeFromQueue take){
+		Gui.sum.setText(Gui.SUM + take.getSum());
+	}
 }

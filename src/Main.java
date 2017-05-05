@@ -1,8 +1,6 @@
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -34,7 +32,10 @@ public class Main extends Application{
 	 */
 	public Parent tab() {
 		BorderPane rootPane = new BorderPane();
-		rootPane.setCenter(gui.button());
+		//rootPane.setCenter(gui.info());
+		rootPane.setCenter(gui.naPozadi());
+		
+		
 		return rootPane;
 	}
 	

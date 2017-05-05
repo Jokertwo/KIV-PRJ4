@@ -82,7 +82,6 @@ public class TakeFromQueue implements Callable<Integer>{
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
 				takeIt(fronta.take());	
-				System.out.println(fronta.size());
 				}
 			//vyresetovat promenou pro pripad opetovneho spusteni
 			Read.done = false;
@@ -139,5 +138,19 @@ public class TakeFromQueue implements Callable<Integer>{
 	
 	
 	///////////////////////////////////////GETRY/////////////////////////////////////////////
-	
+	public long getSum(){
+		return this.sum;
+	}
+	public int getHigh(){
+		return this.highest;
+	}
+	public int getLow(){
+		return this.lower;
+	}
+	public int getCount(){
+		return this.count;
+	}
+	public double getAver(){
+		return this.average;
+	}
 }
