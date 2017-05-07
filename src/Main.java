@@ -34,6 +34,7 @@ public class Main extends Application{
 		BorderPane rootPane = new BorderPane();
 		rootPane.setTop(gui.info());
 		rootPane.setCenter(gui.button());
+		rootPane.setBottom(gui.slide());
 		
 		
 		return rootPane;

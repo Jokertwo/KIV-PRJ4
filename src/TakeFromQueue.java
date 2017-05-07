@@ -1,7 +1,9 @@
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
+
 
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -14,6 +16,9 @@ import javafx.beans.property.StringProperty;
 
 public class TakeFromQueue implements Runnable{
 
+	
+	private OTime time;
+	
 	private BlockingQueue<String> fronta;
 	//celkovy soucet
 	private long sum = 0;
@@ -41,8 +46,15 @@ public class TakeFromQueue implements Runnable{
 	public StringProperty Saver = new SimpleStringProperty(Double.toString(average));
 	
 	
+	
 	public void setQueue(BlockingQueue<String> fronta){
 		this.fronta = fronta;
+	}
+	
+	
+	
+	public void setobserver(OTime time){
+		this.time = time;
 	}
 	
 	/**
@@ -113,25 +125,25 @@ public class TakeFromQueue implements Runnable{
 						Saver.set(AVERAGE + Double.toString(average));
 					}
 				});
+				
 				try{
-					Thread.sleep(100);
+					Thread.sleep(time.getValue());
+					System.out.println(time.getValue());;
 				}catch(InterruptedException ex){}
+				
 				}
 			//vyresetovat promenou pro pripad opetovneho spusteni
 			Read.done = false;
 			
 		}catch(InterruptedException e){
 			e.printStackTrace();
-		}
-	
-		//tisk info
-		printInfo();	
-		
+		}	
 	}
 	
 	/**
 	 * tisk informaci o 'globalnich' promenych
-	 */
+	 * metoda pouzita pri testovani
+	
 	private void printInfo(){
 		System.out.println("Soucet je " + this.sum);
 		System.out.println("Prumer je " + this.average);
@@ -139,7 +151,7 @@ public class TakeFromQueue implements Runnable{
 		System.out.println("Nejnizsi cislo je " + this.lower);
 		System.out.println("Celkove bylo cisel " + this.count);
 	}
-	
+	 */
 	/**
 	 * provede nekolik atomickych operaci s kazdym vybranym prvkem
 	 * 
@@ -168,23 +180,5 @@ public class TakeFromQueue implements Runnable{
 		}
 		
 		
-	}
-	
-	
-	///////////////////////////////////////GETRY/////////////////////////////////////////////
-	public long getSum(){
-		return this.sum;
-	}
-	public int getHigh(){
-		return this.highest;
-	}
-	public int getLow(){
-		return this.lower;
-	}
-	public int getCount(){
-		return this.count;
-	}
-	public double getAver(){
-		return this.average;
 	}
 }

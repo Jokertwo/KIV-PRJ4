@@ -1,28 +1,39 @@
+import java.util.Observer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class Gui {
 
+	private Slide time = new Slide(1,100,50);
+	public IntegerProperty speedOfThread = new SimpleIntegerProperty((int)time.getValue());
+	
 	private BlockingQueue<String> q  = null;
 	private ExecutorService ex = null;
 	private Read d = null;
+	
+	public OTime otime = new OTime((int)time.getValue());
+	
+	
 	private TakeFromQueue k = new TakeFromQueue();;
 	
 	
-
-	
-	public static Label sum,big,low,count,aver;
+	public static Label sum,big,low,count,aver,val;
 	
 	
 	
@@ -66,9 +77,44 @@ public class Gui {
 		
 		aver = new Label();
 		
-		low.textProperty().bind(k.Saver);
+		aver.textProperty().bind(k.Saver);
 		
 		box.getChildren().add(aver);
+		
+		return box;
+	}
+	
+	/**
+	 * Slider kterym se ovlada doba po kterou vlakno ceka
+	 * @return
+	 */
+	public Node slide(){
+		VBox box = new VBox();
+		
+		box.setAlignment(Pos.CENTER);
+		VBox.setMargin(time, new Insets(20));
+		
+		val = new Label(Integer.toString((int)time.getValue()));
+		
+		
+		
+		time.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov,
+	                Number old_val, Number new_val) {
+	                    val.setText(Integer.toString(new_val.intValue()));
+	                    speedOfThread.set(new_val.intValue());
+	                    otime.setValue(new_val.intValue());
+	            }
+		});
+		
+		otime.addObserver(time);
+		
+		//zobrazeni znacek na slideru
+		time.setShowTickMarks(true);
+		//zobrazeni hodnots na slideru
+		time.setShowTickLabels(true);
+		
+		box.getChildren().addAll(time,val);
 		
 		return box;
 	}
@@ -104,6 +150,8 @@ public class Gui {
 			
 			//trida ktera vybira ulozene veci ze souboru
 			k.setQueue(q);
+			
+			k.setobserver(otime);
 			
 			//spusteni nacitani ze souboru
 			ex.execute(d);
