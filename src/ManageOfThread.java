@@ -1,7 +1,6 @@
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -10,23 +9,51 @@ import java.util.concurrent.TimeUnit;
 public class ManageOfThread {
 	
 	
-	
-	
-	
-	
-	
 	//fonta kam se ukladaji nactene hodnoty ye souboru
-			public	BlockingQueue<String> q = new LinkedBlockingQueue<>();
+			private	BlockingQueue<String> q = null;
 		
 	//exekutor kde se nastavi pocet jader pouzivanych pro praci 
-			public ExecutorService ex = Executors.newFixedThreadPool(4);
+			private ExecutorService ex = null;
+	//trida ktera nacita ze souboru
+			private Read d = null;
+			private OTime otime = null;
+			private TakeFromQueue k = null;
+			
+		public ManageOfThread(TakeFromQueue k,OTime otime) {
+			this.otime = otime;
+			this.k = k;
+		}	
+			
 	
-	public void otestuj(){
-		test();
+		/**
+		 * spusteni asymchornich vlaken starajici se o nacitani do fronty ze souboru
+		 * a zaroven vybirani z fronty a nasledne zpracovani kazdeho prvku
+		 */
+	public void start(){
+		//fonta kam se ukladaji nactene hodnoty ye souboru
+		q = new LinkedBlockingQueue<>();
+	
+		//exekutor kde se nastavi pocet jader pouzivanych pro praci 
+		ex = Executors.newFixedThreadPool(4);
 		
-		finish();
+		//trida ktera cte ze souboru
+		d = new Read("Data2.txt",q);
+		
+		//trida ktera vybira ulozene veci ze souboru
+		k.setQueue(q);
+		
+		//priradi tridu Observer
+		k.setobserver(otime);
+		
+		//spusteni nacitani ze souboru
+		ex.execute(d);
+		//spusteni tridy odebirajici polozky z fronty
+		ex.execute(k);
+		
+		
 	}
 	
+	/**
 	public void test(){
 				//trida ktera cte ze souboru
 				Read d = new Read("Data2.txt",q);
@@ -53,16 +80,16 @@ public class ManageOfThread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				*/
+				
 				q.clear();
 	}
 	
-	
+	*/
 	
 	/**
 	 * ukonci bezici vlakna
 	 */
-	public void finish(){
+	private void finish(){
 		try {
 		    System.out.println("attempt to shutdown executor");
 		    ex.shutdown();

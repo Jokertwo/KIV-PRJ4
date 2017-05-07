@@ -1,9 +1,4 @@
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,20 +11,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class Gui {
-
+	//slider
 	private Slide time = new Slide(0,200,50);
-	
-	
-	private BlockingQueue<String> q  = null;
-	private ExecutorService ex = null;
-	private Read d = null;
-	
+	//observer pro ulozeni hodnoty
 	public OTime otime = new OTime((int)time.getValue());
-	
-	
-	private TakeFromQueue k = new TakeFromQueue();;
-	
-	
+	//trida vybirajici z fronty
+	private TakeFromQueue k = new TakeFromQueue();
+	//popisi jednotlivych akci
 	public static Label sum,big,low,count,aver,val,err;
 	
 	
@@ -95,7 +83,7 @@ public class Gui {
 		val = new Label(Integer.toString((int)time.getValue()));
 		
 		
-		
+		//nastaveni listener na slider
 		time.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov,
 	                Number old_val, Number new_val) {
@@ -136,6 +124,9 @@ public class Gui {
 		Button bt = new Button("Test");
 		bt.setOnAction(event ->{
 			
+			ManageOfThread man = new ManageOfThread(k, otime);
+			man.start();
+			/**
 			//fonta kam se ukladaji nactene hodnoty ye souboru
 			q = new LinkedBlockingQueue<>();
 		
@@ -155,6 +146,7 @@ public class Gui {
 			ex.execute(d);
 			//spusteni tridy odebirajici polozky z fronty
 			ex.execute(k);
+			*/
 			
 		});
 		return bt;
