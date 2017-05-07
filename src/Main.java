@@ -32,8 +32,8 @@ public class Main extends Application{
 	 */
 	public Parent tab() {
 		BorderPane rootPane = new BorderPane();
-		//rootPane.setCenter(gui.info());
-		rootPane.setCenter(gui.naPozadi());
+		rootPane.setTop(gui.info());
+		rootPane.setCenter(gui.button());
 		
 		
 		return rootPane;

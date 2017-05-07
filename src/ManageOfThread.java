@@ -32,7 +32,7 @@ public class ManageOfThread {
 				Read d = new Read("Data2.txt",q);
 				
 				//trida ktera vybira ulozene veci ze souboru
-				TakeFromQueue k = new TakeFromQueue(q);
+				TakeFromQueue k = new TakeFromQueue();
 				
 			
 				
@@ -40,12 +40,11 @@ public class ManageOfThread {
 				ex.execute(d);
 				
 				
+				/**
 				//spusteni tridy implementujici callable
 				//konzument informaci ve fronte
 				Future<Integer> future2 = ex.submit(k);
-				
-				
-				
+						
 				//cekani na navratovou hodnotu
 				//nacteni cele fronty
 				try {
@@ -54,6 +53,7 @@ public class ManageOfThread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				*/
 				q.clear();
 	}
 	
@@ -82,20 +82,4 @@ public class ManageOfThread {
 
 	
 	
-	
-	public void setHight(TakeFromQueue take){
-		Gui.big.setText(Gui.HIGHEST + take.getHigh());
-	}
-	public void setLow(TakeFromQueue take){
-		Gui.big.setText(Gui.LOWEST + take.getLow());
-	}
-	public void setAver(TakeFromQueue take){
-		Gui.aver.setText(Gui.AVERAGE + take.getAver());
-	}
-	public void setCount(TakeFromQueue take){
-		Gui.count.setText(Gui.COUNT + take.getCount());
-	}
-	public void setSum(TakeFromQueue take){
-		Gui.sum.setText(Gui.SUM + take.getSum());
-	}
 }

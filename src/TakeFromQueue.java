@@ -1,6 +1,10 @@
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * Trida vybira vztvorenou frontu
  * 
@@ -8,9 +12,9 @@ import java.util.concurrent.Callable;
  *
  */
 
-public class TakeFromQueue implements Callable<Integer>{
+public class TakeFromQueue implements Runnable{
 
-	private final BlockingQueue<String> fronta;
+	private BlockingQueue<String> fronta;
 	//celkovy soucet
 	private long sum = 0;
 	//nejvyssi nalezeny
@@ -23,18 +27,30 @@ public class TakeFromQueue implements Callable<Integer>{
 	private double average = 0;
 	
 	
+	private static final String HIGHEST = "Nejvetsi : ";
+	private static final String LOWEST = "Nejmensi : ";
+	private static final String SUM = "Soucet : ";
+	private static final String AVERAGE = "Prumer";
+	private static final String COUNT = "Pocet";
 	
 	
+	public StringProperty Ssum = new SimpleStringProperty(Long.toString(sum));
+	public StringProperty Shigh = new SimpleStringProperty(Integer.toString(highest));
+	public StringProperty Slow = new SimpleStringProperty(Integer.toString(lower));
+	public StringProperty Scount = new SimpleStringProperty(Integer.toString(count));
+	public StringProperty Saver = new SimpleStringProperty(Double.toString(average));
 	
-	//konstruktor
-	public TakeFromQueue(BlockingQueue<String> fronta) {
+	
+	public void setQueue(BlockingQueue<String> fronta){
 		this.fronta = fronta;
 	}
+	
 	/**
 	 * pocita prumer nactenych polozek
 	 */
 	private void average(){
 		this.average = sum/count; 
+		
 	}
 	
 	
@@ -46,6 +62,7 @@ public class TakeFromQueue implements Callable<Integer>{
 	 */
 	private void sum(int actual){
 		this.sum += actual;
+		
 	}
 	/**
 	 * pokud je hodnota predana argumentem vetsi nez 
@@ -55,6 +72,8 @@ public class TakeFromQueue implements Callable<Integer>{
 	private void highest(int actual){
 		if(this.highest < actual){
 			this.highest = actual;
+			
+			
 		}
 	}
 	/**
@@ -65,23 +84,38 @@ public class TakeFromQueue implements Callable<Integer>{
 	private void lower(int actual){
 		if(this.lower > actual){
 			this.lower = actual;
+			
 		}
 	}
 	/**
 	 * zvysi pocitadlo hodnot
 	 */
 	private void count(){
-		count++;
+		this.count++;
+		
 	}
 	
 	@Override
-	public Integer call() throws Exception {
-		
-		
+	public void run() {
+			
 		try{
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
-				takeIt(fronta.take());	
+				takeIt(fronta.take());
+				Platform.runLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						Scount.set(COUNT + Integer.toString(count));
+						Slow.set(LOWEST + Integer.toString(lower));
+						Shigh.set(HIGHEST + Integer.toString( highest));
+						Ssum.set(SUM + Long.toString(sum));
+						Saver.set(AVERAGE + Double.toString(average));
+					}
+				});
+				try{
+					Thread.sleep(100);
+				}catch(InterruptedException ex){}
 				}
 			//vyresetovat promenou pro pripad opetovneho spusteni
 			Read.done = false;
@@ -92,7 +126,7 @@ public class TakeFromQueue implements Callable<Integer>{
 	
 		//tisk info
 		printInfo();	
-		return -1;
+		
 	}
 	
 	/**

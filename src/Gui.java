@@ -1,4 +1,10 @@
-import javafx.application.Platform;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -8,16 +14,19 @@ import javafx.scene.layout.VBox;
 
 public class Gui {
 
+	private BlockingQueue<String> q  = null;
+	private ExecutorService ex = null;
+	private Read d = null;
+	private TakeFromQueue k = new TakeFromQueue();;
 	
+	
+
 	
 	public static Label sum,big,low,count,aver;
-	Label text;
 	
-	public static final String HIGHEST = "Nejvetsi : ";
-	public static final String LOWEST = "Nejmensi : ";
-	public static final String SUM = "Soucet : ";
-	public static final String AVERAGE = "Prumer";
-	public static final String COUNT = "Pocet";
+	
+	
+	
 	
 	int i = 0;
 	public boolean run = false; 
@@ -25,8 +34,11 @@ public class Gui {
 	private Node left(){
 		VBox box = new VBox();
 
-		sum = new Label(SUM);
-		big = new Label(HIGHEST);
+		sum = new Label();
+		big = new Label();
+		
+		sum.textProperty().bind(k.Ssum);
+		big.textProperty().bind(k.Shigh);
 		
 		box.setSpacing(5);
 		
@@ -38,8 +50,11 @@ public class Gui {
 	private Node center(){
 		VBox box = new VBox();
 		
-		low = new Label(LOWEST);
-		count  = new Label(COUNT);
+		low = new Label();
+		count  = new Label();
+		
+		low.textProperty().bind(k.Slow);
+		count.textProperty().bind(k.Scount);
 		
 		box.setSpacing(5);
 		
@@ -49,7 +64,9 @@ public class Gui {
 	private Node right(){
 		VBox box = new VBox();
 		
-		aver = new Label(AVERAGE);
+		aver = new Label();
+		
+		low.textProperty().bind(k.Saver);
 		
 		box.getChildren().add(aver);
 		
@@ -75,78 +92,49 @@ public class Gui {
 	public Node button(){
 		Button bt = new Button("Test");
 		bt.setOnAction(event ->{
-			//ManageOfThread start = new ManageOfThread();
-			//start.otestuj();
-			startTask();
+			
+			//fonta kam se ukladaji nactene hodnoty ye souboru
+			q = new LinkedBlockingQueue<>();
+		
+			//exekutor kde se nastavi pocet jader pouzivanych pro praci 
+			ex = Executors.newFixedThreadPool(4);
+			
+			//trida ktera cte ze souboru
+			d = new Read("Data2.txt",q);
+			
+			//trida ktera vybira ulozene veci ze souboru
+			k.setQueue(q);
+			
+			//spusteni nacitani ze souboru
+			ex.execute(d);
+			//spusteni tridy odebirajici polozky z fronty
+			ex.execute(k);
+			
+			
+			/**
+			//spusteni tridy implementujici callable
+			//konzument informaci ve fronte
+			Future<Integer> future2 = ex.submit(k);
+					
+			//cekani na navratovou hodnotu
+			//nacteni cele fronty
+			try {
+				Integer a = future2.get();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+			
+			
 		});
 		return bt;
 	}
+}
 	
 	
 //////////////////////////////////////////testovani////////////////////////////	
-	public Node stopButton(){
-		Button bt = new Button("Stop");
-		bt.setOnAction(event->{
-			this.run = true;
-		});
-		return bt;
-	}
-	public Node test(){
-		text = new Label("Start");
-		return text;
-	}
-	public void startTask(){
-		Runnable task = new Runnable() {
-			
-			@Override
-			public void run() {
-				setText();
-				
-			}
-		};
-		Thread backround = new Thread(task);
-		backround.setDaemon(true);
-		backround.start();
-	}
-	
-	public void setText()
-	{
-		for(;; i++)
-		{
-			try
-			{
-				final String status = "Pocitadlo : " + i;
-				Platform.runLater(new Runnable()
-				{	
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						text.setText(status);
-					}
-				});
-				Thread.sleep(100);
-			}catch(InterruptedException ex){
-				ex.printStackTrace();
-			}
-			if(run == true){
-				break;
-			}
-		}
-		run = false;
-	}
 
-	public Node naPozadi(){
-		HBox b = new HBox();
-		b.getChildren().addAll(button(),stopButton());
-		b.setSpacing(10);
-		
-		VBox x = new VBox();
-		x.getChildren().addAll(b,test());
-		x.setSpacing(20);
-		
-		return x;
-	}
-	
-	
-}
+
+
 
