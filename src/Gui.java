@@ -5,8 +5,6 @@ import java.util.concurrent.Executors;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -20,7 +18,7 @@ import javafx.scene.layout.VBox;
 public class Gui {
 
 	private Slide time = new Slide(0,200,50);
-	public IntegerProperty speedOfThread = new SimpleIntegerProperty((int)time.getValue());
+	
 	
 	private BlockingQueue<String> q  = null;
 	private ExecutorService ex = null;
@@ -32,14 +30,11 @@ public class Gui {
 	private TakeFromQueue k = new TakeFromQueue();;
 	
 	
-	public static Label sum,big,low,count,aver,val;
+	public static Label sum,big,low,count,aver,val,err;
 	
 	
 	
 	
-	
-	int i = 0;
-	public boolean run = false; 
 	
 	private Node left(){
 		VBox box = new VBox();
@@ -61,24 +56,28 @@ public class Gui {
 		VBox box = new VBox();
 		
 		low = new Label();
-		count  = new Label();
+		aver = new Label();
+		
 		
 		low.textProperty().bind(k.Slow);
-		count.textProperty().bind(k.Scount);
+		aver.textProperty().bind(k.Saver);
+		
 		
 		box.setSpacing(5);
 		
-		box.getChildren().addAll(low,count);
+		box.getChildren().addAll(low,aver);
 		return box;
 	}
 	private Node right(){
 		VBox box = new VBox();
 		
-		aver = new Label();
+		count  = new Label();
+		err = new Label();
 		
-		aver.textProperty().bind(k.Saver);
+		count.textProperty().bind(k.Scount);
+		err.textProperty().bind(k.Serror);
 		
-		box.getChildren().add(aver);
+		box.getChildren().addAll(count,err);
 		
 		return box;
 	}
@@ -101,7 +100,6 @@ public class Gui {
 			public void changed(ObservableValue<? extends Number> ov,
 	                Number old_val, Number new_val) {
 	                    val.setText(Integer.toString(new_val.intValue()));
-	                    speedOfThread.set(new_val.intValue());
 	                    otime.setValue(new_val.intValue());
 	            }
 		});

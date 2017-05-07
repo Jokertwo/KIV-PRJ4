@@ -155,6 +155,7 @@ public class TakeFromQueue implements Runnable{
 						Shigh.set(HIGHEST + Integer.toString( highest));
 						Ssum.set(SUM + Long.toString(sum));
 						Saver.set(AVERAGE + Double.toString(average));
+						Serror.set(ERROR + Integer.toString(errors)); 
 					}
 				});
 				
@@ -173,18 +174,6 @@ public class TakeFromQueue implements Runnable{
 		}	
 	}
 	
-	/**
-	 * tisk informaci o 'globalnich' promenych
-	 * metoda pouzita pri testovani
-	
-	private void printInfo(){
-		System.out.println("Soucet je " + this.sum);
-		System.out.println("Prumer je " + this.average);
-		System.out.println("Nejvyssi cislo je " + this.highest);
-		System.out.println("Nejnizsi cislo je " + this.lower);
-		System.out.println("Celkove bylo cisel " + this.count);
-	}
-	 */
 	/**
 	 * provede nekolik atomickych operaci s kazdym vybranym prvkem
 	 * 
@@ -205,9 +194,11 @@ public class TakeFromQueue implements Runnable{
 			count();
 			//prumer
 			average();
+			
 				
 		}catch(NumberFormatException e){
-			System.err.println("Neni to cislo");
+			//chyby
+			errors();
 		}
 		
 		
