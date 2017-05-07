@@ -2,8 +2,6 @@ import java.util.concurrent.BlockingQueue;
 
 
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -16,43 +14,55 @@ import javafx.beans.property.StringProperty;
 
 public class TakeFromQueue implements Runnable{
 
-	
+	//Observable trida ve ktere se uklada hodnota po kterou bude vlakno 
+	//spat
 	private OTime time;
 	
 	private BlockingQueue<String> fronta;
 	//celkovy soucet
-	private long sum = 0;
+	private long sum;
 	//nejvyssi nalezeny
-	private int highest = Integer.MIN_VALUE;
+	private int highest;
 	//nejnizzsi nalezeny
-	private int lower = Integer.MAX_VALUE;
+	private int lower;
 	//celkovy pocet
-	private int count = 0;
+	private int count;
 	//prumer
-	private double average = 0;
+	private double average;
+	//pocet znaku ktere nebyly cisla
+	private int errors;
 	
 	
 	private static final String HIGHEST = "Nejvetsi : ";
 	private static final String LOWEST = "Nejmensi : ";
 	private static final String SUM = "Soucet : ";
 	private static final String AVERAGE = "Prumer : ";
-	private static final String COUNT = "Pocet : ";
+	private static final String COUNT = "Pocet cisel : ";
+	private static final String ERROR = "Pocet chyb : ";
 	
 	
-	public StringProperty Ssum = new SimpleStringProperty(Long.toString(sum));
-	public StringProperty Shigh = new SimpleStringProperty(Integer.toString(highest));
-	public StringProperty Slow = new SimpleStringProperty(Integer.toString(lower));
-	public StringProperty Scount = new SimpleStringProperty(Integer.toString(count));
-	public StringProperty Saver = new SimpleStringProperty(Double.toString(average));
+	//promene pro aktualizovani lablu s informacemi
+	public StringProperty Ssum = new SimpleStringProperty(SUM + "---");
+	public StringProperty Shigh = new SimpleStringProperty(HIGHEST + "---");
+	public StringProperty Slow = new SimpleStringProperty(LOWEST + "---");
+	public StringProperty Scount = new SimpleStringProperty(COUNT + "---");
+	public StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
+	public StringProperty Serror = new SimpleStringProperty(ERROR + "---");
 	
 	
-	
+	/**
+	 * nastavi frontu ze ktere se bude cist
+	 * @param fronta BlockingQueue<String>
+	 */
 	public void setQueue(BlockingQueue<String> fronta){
 		this.fronta = fronta;
 	}
 	
 	
-	
+	/**
+	 * trida s casem spanku vlakna
+	 * @param time OTime trida
+	 */
 	public void setobserver(OTime time){
 		this.time = time;
 	}
@@ -65,8 +75,12 @@ public class TakeFromQueue implements Runnable{
 		
 	}
 	
-	
-	
+	/**
+	 * pocita pocet chyb
+	 */
+	private void errors(){
+		this.errors++;
+	}
 	
 	/**
 	 * scita hodnotu pradanou parametrem s 'globalni' promenou sum
@@ -107,13 +121,31 @@ public class TakeFromQueue implements Runnable{
 		
 	}
 	
+	/**
+	 * reset pred kazdym spustenim
+	 */
+	private void reset(){
+		this.sum = 0;
+		this.average = 0;
+		this.count = 0;
+		this.highest = Integer.MIN_VALUE;
+		this.lower = Integer.MAX_VALUE;
+		this.errors = 0;
+	}
+	
 	@Override
 	public void run() {
 			
 		try{
+			reset();
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
+				
+				//zpracovani prvku z fronty
 				takeIt(fronta.take());
+				
+				//aktualizace informaci v GUI
+				//pomoci dalsiho vlakna
 				Platform.runLater(new Runnable() {
 					
 					@Override
@@ -127,8 +159,9 @@ public class TakeFromQueue implements Runnable{
 				});
 				
 				try{
+					//uspani vlakna na promenou dobu
 					Thread.sleep(time.getValue());
-					System.out.println(time.getValue());;
+					
 				}catch(InterruptedException ex){}
 				
 				}
@@ -172,9 +205,7 @@ public class TakeFromQueue implements Runnable{
 			count();
 			//prumer
 			average();
-			
-			 
-			
+				
 		}catch(NumberFormatException e){
 			System.err.println("Neni to cislo");
 		}

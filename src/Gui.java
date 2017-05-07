@@ -1,4 +1,4 @@
-import java.util.Observer;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,13 +14,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class Gui {
 
-	private Slide time = new Slide(1,100,50);
+	private Slide time = new Slide(0,200,50);
 	public IntegerProperty speedOfThread = new SimpleIntegerProperty((int)time.getValue());
 	
 	private BlockingQueue<String> q  = null;
@@ -151,6 +150,7 @@ public class Gui {
 			//trida ktera vybira ulozene veci ze souboru
 			k.setQueue(q);
 			
+			//priradi tridu Observer
 			k.setobserver(otime);
 			
 			//spusteni nacitani ze souboru
@@ -158,30 +158,12 @@ public class Gui {
 			//spusteni tridy odebirajici polozky z fronty
 			ex.execute(k);
 			
-			
-			/**
-			//spusteni tridy implementujici callable
-			//konzument informaci ve fronte
-			Future<Integer> future2 = ex.submit(k);
-					
-			//cekani na navratovou hodnotu
-			//nacteni cele fronty
-			try {
-				Integer a = future2.get();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			
-			
 		});
 		return bt;
 	}
 }
 	
-	
-//////////////////////////////////////////testovani////////////////////////////	
+
 
 
 
