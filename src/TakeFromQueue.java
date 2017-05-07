@@ -30,8 +30,8 @@ public class TakeFromQueue implements Runnable{
 	private static final String HIGHEST = "Nejvetsi : ";
 	private static final String LOWEST = "Nejmensi : ";
 	private static final String SUM = "Soucet : ";
-	private static final String AVERAGE = "Prumer";
-	private static final String COUNT = "Pocet";
+	private static final String AVERAGE = "Prumer : ";
+	private static final String COUNT = "Pocet : ";
 	
 	
 	public StringProperty Ssum = new SimpleStringProperty(Long.toString(sum));

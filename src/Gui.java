@@ -78,7 +78,7 @@ public class Gui {
 		
 		box.getChildren().addAll(left(),center(),right());
 		
-		box.setSpacing(50);
+		box.setSpacing(20);
 		box.setAlignment(Pos.CENTER);
 		return box;
 	}
