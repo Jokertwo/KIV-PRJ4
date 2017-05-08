@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,24 +40,23 @@ public class CreateFile implements Runnable{
 		return false;
 	}
 	
-	private void chooseFile(){
+	private boolean chooseFile(){
 		FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Create file");
-        fileChooser.setInitialDirectory(
-                new File(System.getProperty("user.home"))
-            );
+    
         fileChooser.getExtensionFilters().addAll(
         		 new FileChooser.ExtensionFilter("Text", "*.txt")
         		);
         
         file = fileChooser.showSaveDialog(Main.primaryStage);
+        if(file != null){
+        	return true;
+        }
+        return false;
 	}
 	
 	/**
 	 * vytvori soubor podle zadanych parametru
-	 * na kazdy radek zapise jedno cislo nebo pismeno(chyby)
-	 * podle predanych parametru
-	 * 
 	 * @param numberOfLines pocet radku
 	 * @param nameOfFile jmeno souboru ktery se ma vytvorit
 	 */
@@ -79,11 +79,13 @@ public class CreateFile implements Runnable{
 	
 	
 	@Override
-	public void run() {
-		chooseFile();
-		if(getNumberOfLines()){
-			create();
-		};
+	public void run() {	
+		if(chooseFile()){
+			if(getNumberOfLines()){
+				create();
+			};
+		}
+		
 		
 		
 	}

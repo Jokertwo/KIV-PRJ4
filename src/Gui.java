@@ -24,7 +24,7 @@ public class Gui {
 	//buton---tlacitko
 	public ButtonStart bt = new ButtonStart("Spust");
 	//trida starajici se o vlakna
-	private ManageOfThread man = new ManageOfThread(otime);
+	private ManageOfThread man = null;
 	public ODisable dis = new ODisable(false);
 	
 	
@@ -82,6 +82,7 @@ public class Gui {
 	private Node createButton(){
 		Button create = new Button("Vytvor soubor");
 		create.setOnAction(event->{
+			man = new ManageOfThread(otime);
 			man.create();
 		});
 		return create;
@@ -153,7 +154,7 @@ public class Gui {
 	private Node button(){
 		
 		bt.setOnAction(event ->{
-			
+			man = new ManageOfThread(otime);
 			//spusteni vlaken na pozadi
 			man.start();		
 			});

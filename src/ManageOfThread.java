@@ -49,8 +49,8 @@ public class ManageOfThread {
 		 * a zaroven vybirani z fronty a nasledne zpracovani kazdeho prvku
 		 */
 	public void start(){
-		
-		
+		//vyber souoru ze ktereho se bude cist
+		if(chooseFile()){
 			//pocitadlo
 			latch = new CountDownLatch(2);
 			
@@ -85,6 +85,7 @@ public class ManageOfThread {
 			//po dobehnuti obou vlaken ukoneci ExecutorService
 			ex.execute(new Runnable() {
 				
+				//cekani na dobehnuti vlaken
 				@Override
 				public void run() {
 					try{
@@ -95,6 +96,7 @@ public class ManageOfThread {
 					finish();
 				}
 			});
+		}
 	}	
 	
 	/**
@@ -125,9 +127,7 @@ public class ManageOfThread {
 	private boolean chooseFile(){
 		FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Vyber soubor");
-        fileChooser.setInitialDirectory(
-                new File(System.getProperty("user.home"))
-            );
+        
         fileChooser.getExtensionFilters().addAll(
         		 new FileChooser.ExtensionFilter("Text", "*.txt")
         		);
