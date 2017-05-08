@@ -2,6 +2,8 @@ import java.util.concurrent.BlockingQueue;
 
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -49,6 +51,7 @@ public class TakeFromQueue implements Runnable{
 	public static StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
 	public static StringProperty Serror = new SimpleStringProperty(ERROR + "---");
 	
+	public static BooleanProperty Sdisable = new SimpleBooleanProperty(false);
 	
 	/**
 	 * nastavi frontu ze ktere se bude cist
@@ -135,7 +138,7 @@ public class TakeFromQueue implements Runnable{
 	
 	@Override
 	public void run() {
-			
+			Sdisable.set(true);
 		try{
 			//vynuluje hodnoty
 			reset();
@@ -164,15 +167,30 @@ public class TakeFromQueue implements Runnable{
 					//uspani vlakna na promenou dobu
 					Thread.sleep(time.getValue());
 					
-				}catch(InterruptedException ex){}
-				
-				}
-			//vyresetovat promenou pro pripad opetovneho spusteni
-			Read.done = false;
+				}catch(InterruptedException ex){
+					//pri predcasnem ukonceni vlakna
+					//vycisti zbyvajici prvky ve fronte
+					fronta.clear();
+					
+					//promena jez ridi disable tlacitka
+					Sdisable.set(false);
+					
+					//vyresetovat promenou pro pripad opetovneho spusteni
+					Read.done = false;
+					
+				}			
+			}
+			
 			
 		}catch(InterruptedException e){
 			e.printStackTrace();
-		}	
+		}
+		
+		//vyresetovat promenou pro pripad opetovneho spusteni
+		Read.done = false;
+		
+		//promena jez ridi disable tlacitka
+		Sdisable.set(false);
 	}
 	
 	/**

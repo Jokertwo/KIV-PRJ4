@@ -53,7 +53,11 @@ public class Read implements Runnable
 					//ulozi do fronty
 					fronta.put(radka);
 				}
-				catch(InterruptedException e){}
+				catch(InterruptedException e){
+			
+					done = true;
+					fr.close();
+				}
 			}
 			done = true;
 			fr.close();

@@ -1,11 +1,11 @@
 
 
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,10 +17,11 @@ public class Gui {
 	public OTime otime = new OTime((int)time.getValue());
 	//popisi jednotlivych akci
 	public static Label sum,big,low,count,aver,val,err;
+	//buton---tlacitko
+	public ButtonStart bt = new ButtonStart("Test");
+	public ODisable dis = new ODisable(false);
 	
-	
-	
-	
+	public boolean test = false;
 	
 	private Node left(){
 		VBox box = new VBox();
@@ -119,12 +120,18 @@ public class Gui {
 	 * @return button
 	 */
 	public Node button(){
-		Button bt = new Button("Test");
+		
 		bt.setOnAction(event ->{
 			//trida starajici se o vlakna
 			ManageOfThread man = new ManageOfThread(otime);
-			man.start();
+			man.start();		
 			});
+		dis.addObserver(bt);
+		
+		bt.disableProperty().bind(TakeFromQueue.Sdisable);
+		
+		
+		
 		return bt;
 	}
 }
