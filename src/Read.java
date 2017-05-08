@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -15,11 +16,10 @@ import java.util.concurrent.CountDownLatch;
 
 public class Read implements Runnable
 {
-	private String jmenoSouboru = new String();
 	private FileReader fr;
 	private BufferedReader in;
 	private final BlockingQueue<String> fronta;
-	
+	private File file;
 	public static boolean done = false;
 	
 	private CountDownLatch latch = null;
@@ -29,8 +29,8 @@ public class Read implements Runnable
 	 * @param jmenoSouboru jmeno souboru ze ktereho se ma cist
 	 * @param fronta fronta kam se budou nactene informace ukladat
 	 */
-	public Read(String jmenoSouboru,BlockingQueue<String> fronta){
-		this.jmenoSouboru = jmenoSouboru;
+	public Read(File file,BlockingQueue<String> fronta){
+		this.file = file;
 		this.fronta = fronta;
 	}
 	
@@ -39,10 +39,6 @@ public class Read implements Runnable
 		
 		readFromFile();
 		return;
-	}
-	
-	public boolean isAlive(){
-		return Thread.currentThread().isAlive();
 	}
 	
 	public void setCountDownLatch(CountDownLatch latch){
@@ -56,7 +52,7 @@ public class Read implements Runnable
 		String radka;
 		
 		try{
-			fr = new FileReader(jmenoSouboru);
+			fr = new FileReader(file);
 			in = new BufferedReader(fr);
 			//cte dokud nedojde az na konec souboru
 			while((radka = in.readLine()) != null){

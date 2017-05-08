@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class Main extends Application{
 	
 	
-	private Stage primaryStage;
+	public static Stage primaryStage;
 	private Gui gui = new Gui();
 	
 	@Override
@@ -31,17 +31,15 @@ public class Main extends Application{
 	public Parent tab() {
 		BorderPane rootPane = new BorderPane();
 		rootPane.setTop(gui.info());
-		rootPane.setCenter(gui.button());
+		rootPane.setCenter(gui.buttons());
 		rootPane.setBottom(gui.slide());
 				
 		return rootPane;
 	}
-	
-	
-	
- public static void main(String[] args){		
-	 launch(args);					
-	}
+		
+	 public static void main(String[] args){		
+		 launch(args);					
+		}
 
 
 }
