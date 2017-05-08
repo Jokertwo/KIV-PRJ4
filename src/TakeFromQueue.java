@@ -1,5 +1,5 @@
 import java.util.concurrent.BlockingQueue;
-
+import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -34,6 +34,7 @@ public class TakeFromQueue implements Runnable{
 	//pocet znaku ktere nebyly cisla
 	private int errors;
 	
+	private CountDownLatch latch = null;
 	
 	private static final String HIGHEST = "Nejvetsi : ";
 	private static final String LOWEST = "Nejmensi : ";
@@ -41,6 +42,7 @@ public class TakeFromQueue implements Runnable{
 	private static final String AVERAGE = "Prumer : ";
 	private static final String COUNT = "Pocet cisel : ";
 	private static final String ERROR = "Pocet chyb : ";
+	
 	
 	
 	//promene pro aktualizovani labelu s informacemi
@@ -61,6 +63,9 @@ public class TakeFromQueue implements Runnable{
 		this.fronta = fronta;
 	}
 	
+	public void setCountDownLatch(CountDownLatch latch){
+		this.latch = latch;
+	}
 	
 	/**
 	 * trida s casem spanku vlakna
@@ -70,12 +75,17 @@ public class TakeFromQueue implements Runnable{
 		this.time = time;
 	}
 	
+	
 	/**
 	 * pocita prumer nactenych polozek
 	 */
 	private void average(){
 		this.average = sum/count; 
 		
+	}
+	
+	public boolean isAlive(){
+		return Thread.currentThread().isAlive();
 	}
 	
 	/**
@@ -138,6 +148,10 @@ public class TakeFromQueue implements Runnable{
 	
 	@Override
 	public void run() {
+		
+		Thread k = Thread.currentThread();
+		k.setName("Citac z fronty");
+		
 		//disable tlacitka
 			Sdisable.set(true);
 		try{
@@ -194,6 +208,8 @@ public class TakeFromQueue implements Runnable{
 		Sdisable.set(false);
 		
 		
+		latch.countDown();
+		
 	}
 	
 	/**
@@ -221,8 +237,6 @@ public class TakeFromQueue implements Runnable{
 		}catch(NumberFormatException e){
 			//chyby
 			errors();
-		}
-		
-		
+		}		
 	}
 }
