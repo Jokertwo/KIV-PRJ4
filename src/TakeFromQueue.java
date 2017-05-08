@@ -50,7 +50,7 @@ public class TakeFromQueue implements Runnable{
 	public static StringProperty Scount = new SimpleStringProperty(COUNT + "---");
 	public static StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
 	public static StringProperty Serror = new SimpleStringProperty(ERROR + "---");
-	
+	//promena pro nastaveni disable tlacitka
 	public static BooleanProperty Sdisable = new SimpleBooleanProperty(false);
 	
 	/**
@@ -138,6 +138,7 @@ public class TakeFromQueue implements Runnable{
 	
 	@Override
 	public void run() {
+		//disable tlacitka
 			Sdisable.set(true);
 		try{
 			//vynuluje hodnoty
@@ -168,6 +169,8 @@ public class TakeFromQueue implements Runnable{
 					Thread.sleep(time.getValue());
 					
 				}catch(InterruptedException ex){
+					ex.printStackTrace();
+					
 					//pri predcasnem ukonceni vlakna
 					//vycisti zbyvajici prvky ve fronte
 					fronta.clear();
@@ -179,9 +182,7 @@ public class TakeFromQueue implements Runnable{
 					Read.done = false;
 					
 				}			
-			}
-			
-			
+			}			
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
@@ -191,6 +192,8 @@ public class TakeFromQueue implements Runnable{
 		
 		//promena jez ridi disable tlacitka
 		Sdisable.set(false);
+		
+		
 	}
 	
 	/**

@@ -32,8 +32,7 @@ public class Read implements Runnable
 	}
 	
 	@Override
-	public void run(){
-		
+	public void run(){	
 		readFromFile();
 	}
 	
@@ -62,6 +61,7 @@ public class Read implements Runnable
 			done = true;
 			fr.close();
 		}catch(IOException e){
+			done = true;
 			System.err.println(e);
 		}
 	}

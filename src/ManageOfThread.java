@@ -33,21 +33,17 @@ public class ManageOfThread {
 		 * a zaroven vybirani z fronty a nasledne zpracovani kazdeho prvku
 		 */
 	public void start(){
-		
-		
-		
+			
 		//fonta kam se ukladaji nactene hodnoty ye souboru
 		q = new LinkedBlockingQueue<>();
-
 		
 		//trida ktera cte ze souboru
 		d = new Read("Data2.txt",q);
 		
+		//trida ktera vybira ulozene veci z fronty
 		k = new TakeFromQueue();
-		
-		
-		
-		//trida ktera vybira ulozene veci ze souboru
+				
+		//priradi z ktere fronty se ma vybirat
 		k.setQueue(q);
 		
 		//priradi tridu Observer
@@ -57,10 +53,7 @@ public class ManageOfThread {
 		ex.execute(d);
 		//spusteni tridy odebirajici polozky z fronty
 		ex.execute(k);
-		
-		
-		
-		
+				
 	}
 	
 	

@@ -14,8 +14,9 @@ public class ODisable extends Observable{
 		return value;
 	}
 	
+	
 	public void setValue(boolean value){
-		value = value;
+		this.value = value;
 		setChanged();
 		notifyObservers(value);
 	}
