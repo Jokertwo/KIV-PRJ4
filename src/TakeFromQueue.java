@@ -1,5 +1,11 @@
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * Trida vybira vztvorenou frontu
@@ -8,49 +14,86 @@ import java.util.concurrent.Callable;
  *
  */
 
-public class TakeFromQueue implements Callable<Integer>{
+public class TakeFromQueue implements Runnable{
 
-	private final BlockingQueue<String> fronta;
+	//Observable trida ve ktere se uklada hodnota po kterou bude vlakno 
+	//spat
+	private OTime time;
+	
+	private BlockingQueue<String> fronta;
 	//celkovy soucet
-	private long sum = 0;
+	private long sum;
 	//nejvyssi nalezeny
-	private int highest = Integer.MIN_VALUE;
+	private int highest;
 	//nejnizzsi nalezeny
-	private int lower = Integer.MAX_VALUE;
+	private int lower;
 	//celkovy pocet
-	private int count = 0;
+	private int count;
 	//prumer
-	private double average = 0;
+	private double average;
+	//pocet znaku ktere nebyly cisla
+	private int errors;
 	
-	private boolean done = false;
+	private CountDownLatch latch = null;
+	
+	private static final String HIGHEST = "Nejvetsi : ";
+	private static final String LOWEST = "Nejmensi : ";
+	private static final String SUM = "Soucet : ";
+	private static final String AVERAGE = "Prumer : ";
+	private static final String COUNT = "Pocet cisel : ";
+	private static final String ERROR = "Pocet chyb : ";
 	
 	
 	
+	//promene pro aktualizovani labelu s informacemi
+	public static StringProperty Ssum = new SimpleStringProperty(SUM + "---");
+	public static StringProperty Shigh = new SimpleStringProperty(HIGHEST + "---");
+	public static StringProperty Slow = new SimpleStringProperty(LOWEST + "---");
+	public static StringProperty Scount = new SimpleStringProperty(COUNT + "---");
+	public static StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
+	public static StringProperty Serror = new SimpleStringProperty(ERROR + "---");
+	//promena pro nastaveni disable tlacitka
+	public static BooleanProperty Sdisable = new SimpleBooleanProperty(false);
 	
-	//konstruktor
-	public TakeFromQueue(BlockingQueue<String> fronta) {
+	/**
+	 * nastavi frontu ze ktere se bude cist
+	 * @param fronta BlockingQueue
+	 */
+	public void setQueue(BlockingQueue<String> fronta){
 		this.fronta = fronta;
 	}
+	
+	public void setCountDownLatch(CountDownLatch latch){
+		this.latch = latch;
+	}
+	
+	/**
+	 * trida s casem spanku vlakna
+	 * @param time OTime trida
+	 */
+	public void setobserver(OTime time){
+		this.time = time;
+	}
+	
+	
 	/**
 	 * pocita prumer nactenych polozek
 	 */
 	private void average(){
 		this.average = sum/count; 
+		
+	}
+	
+	public boolean isAlive(){
+		return Thread.currentThread().isAlive();
 	}
 	
 	/**
-	 * pokud je v argumentu predana nula nastavy
-	 * 'globalni' promenou done na true 
-	 * 
-	 * @param sizeOfQueue int
+	 * pocita pocet chyb
 	 */
-	private void notYet(int sizeOfQueue){
-		System.out.println(sizeOfQueue + " velikost");
-		if(sizeOfQueue == 0){
-			this.done = true;
-		}
+	private void errors(){
+		this.errors++;
 	}
-	
 	
 	/**
 	 * scita hodnotu pradanou parametrem s 'globalni' promenou sum
@@ -58,6 +101,7 @@ public class TakeFromQueue implements Callable<Integer>{
 	 */
 	private void sum(int actual){
 		this.sum += actual;
+		
 	}
 	/**
 	 * pokud je hodnota predana argumentem vetsi nez 
@@ -67,6 +111,8 @@ public class TakeFromQueue implements Callable<Integer>{
 	private void highest(int actual){
 		if(this.highest < actual){
 			this.highest = actual;
+			
+			
 		}
 	}
 	/**
@@ -77,46 +123,93 @@ public class TakeFromQueue implements Callable<Integer>{
 	private void lower(int actual){
 		if(this.lower > actual){
 			this.lower = actual;
+			
 		}
 	}
 	/**
 	 * zvysi pocitadlo hodnot
 	 */
 	private void count(){
-		count++;
-	}
-	
-	@Override
-	public Integer call() throws Exception {
-		//pockani nez se aspon trochu naplni fronta
-		//neni uplne nejstatnejsi
-		waitt(100);
+		this.count++;
 		
-		try{
-			//vybira dokud fronta neni prazdna
-			while(Read.done != true || !fronta.isEmpty()){
-				takeIt(fronta.take());	
-				
-				}
-			
-		}catch(InterruptedException e){
-			e.printStackTrace();
-		}
-		notYet(fronta.size());
-		//tisk info
-		printInfo();	
-		return -1;
 	}
 	
 	/**
-	 * tisk informaci o 'globalnich' promenych
+	 * reset pred kazdym spustenim
 	 */
-	private void printInfo(){
-		System.out.println("Soucet je " + this.sum);
-		System.out.println("Prumer je " + this.average);
-		System.out.println("Nejvyssi cislo je " + this.highest);
-		System.out.println("Nejnizsi cislo je " + this.lower);
-		System.out.println("Celkove bylo cisel " + this.count);
+	private void reset(){
+		this.sum = 0;
+		this.average = 0;
+		this.count = 0;
+		this.highest = Integer.MIN_VALUE;
+		this.lower = Integer.MAX_VALUE;
+		this.errors = 0;
+	}
+	
+	@Override
+	public void run() {
+		
+		Thread k = Thread.currentThread();
+		k.setName("Citac z fronty");
+		
+		//disable tlacitka
+			Sdisable.set(true);
+		try{
+			//vynuluje hodnoty
+			reset();
+			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
+			while(Read.done != true || !fronta.isEmpty()){
+				
+				//zpracovani prvku z fronty
+				takeIt(fronta.take());
+				
+				//aktualizace informaci v GUI
+				//pomoci dalsiho vlakna
+				Platform.runLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						Scount.set(COUNT + Integer.toString(count));
+						Slow.set(LOWEST + Integer.toString(lower));
+						Shigh.set(HIGHEST + Integer.toString( highest));
+						Ssum.set(SUM + Long.toString(sum));
+						Saver.set(AVERAGE + Double.toString(average));
+						Serror.set(ERROR + Integer.toString(errors)); 
+					}
+				});
+				
+				try{
+					//uspani vlakna na promenou dobu
+					Thread.sleep(time.getValue());
+					
+				}catch(InterruptedException ex){
+					ex.printStackTrace();
+					
+					//pri predcasnem ukonceni vlakna
+					//vycisti zbyvajici prvky ve fronte
+					fronta.clear();
+					
+					//promena jez ridi disable tlacitka
+					Sdisable.set(false);
+					
+					//vyresetovat promenou pro pripad opetovneho spusteni
+					Read.done = false;
+					
+				}			
+			}			
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}
+		
+		//vyresetovat promenou pro pripad opetovneho spusteni
+		Read.done = false;
+		
+		//promena jez ridi disable tlacitka
+		Sdisable.set(false);
+		
+		
+		latch.countDown();
+		
 	}
 	
 	/**
@@ -140,34 +233,10 @@ public class TakeFromQueue implements Callable<Integer>{
 			//prumer
 			average();
 			
-			 
-			
+				
 		}catch(NumberFormatException e){
-			System.err.println("Neni to cislo");
-		}
-		
-		
-	}
-	
-	/**
-	 * tiskne informaci o poloykach fronty
-	 * @param radka string k tisku
-	 * @param size  vilost dosavadni fronty
-	 */
-	private void konzumuj(String radka, int size){
-		System.out.println(radka + "velikost fronty " + size);
-	}
-	
-	/**
-	 * zdrzovaci funkce
-	 */
-	private void waitt(int time){
-		try{
-			Thread.sleep(time);
-		}catch(InterruptedException e){}
-	}
-	///////////////////////////////////////GETRY/////////////////////////////////////////////
-	public boolean getDone(){
-		return this.done;
+			//chyby
+			errors();
+		}		
 	}
 }

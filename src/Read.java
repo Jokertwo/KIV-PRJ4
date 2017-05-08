@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * trida obstaravajici cteni ze souboru
@@ -18,8 +19,10 @@ public class Read implements Runnable
 	private FileReader fr;
 	private BufferedReader in;
 	private final BlockingQueue<String> fronta;
+	
 	public static boolean done = false;
 	
+	private CountDownLatch latch = null;
 	
 	/**
 	 * kontruktor
@@ -35,6 +38,15 @@ public class Read implements Runnable
 	public void run(){
 		
 		readFromFile();
+		return;
+	}
+	
+	public boolean isAlive(){
+		return Thread.currentThread().isAlive();
+	}
+	
+	public void setCountDownLatch(CountDownLatch latch){
+		this.latch = latch;
 	}
 	
 	/**
@@ -53,13 +65,18 @@ public class Read implements Runnable
 					//ulozi do fronty
 					fronta.put(radka);
 				}
-				catch(InterruptedException e){}
+				catch(InterruptedException e){
+					e.printStackTrace();
+					done = true;
+					fr.close();
+				}
 			}
 			done = true;
 			fr.close();
 		}catch(IOException e){
 			System.err.println(e);
 		}
+		latch.countDown();
 	}
 	
 }

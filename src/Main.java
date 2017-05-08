@@ -1,61 +1,47 @@
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
-import java.util.concurrent.TimeUnit;
-
-public class Main {
-	//fonta kam se ukladaji nactene hodnoty ye souboru
-		static	BlockingQueue<String> q = new LinkedBlockingQueue<>();
+public class Main extends Application{
 	
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		
-		//exekutor kde se nastavi pocet jader pouzivanych pro praci 
-		ExecutorService ex = Executors.newFixedThreadPool(2);
-		
-		
-		
-		//trida ktera cte ze souboru
-		Read d = new Read("Data2.txt",q);
-		
-		//trida ktera vybira ulozene veci ze souboru
-		TakeFromQueue k = new TakeFromQueue(q);
-		
-		//spustine obou trid
-		ex.execute(d);
-		
-		//spusteni tridy implementujici callable
-		Future<Integer> future2 = ex.submit(k);
-		
-		//cekani na navratovou hodnotu
-		//nacteni cele fronty
-		Integer a = future2.get();
-		
-		
-		
-		
-		
-		try {
-		    System.out.println("attempt to shutdown executor");
-		    ex.shutdown();
-		    ex.awaitTermination(5, TimeUnit.SECONDS);
-		}
-		catch (InterruptedException e) {
-		    System.err.println("tasks interrupted");
-		}
-		finally {
-		    if (!ex.isTerminated()) {
-		        System.err.println("cancel non-finished tasks");
-		    }
-		    ex.shutdownNow();
-		    System.out.println("shutdown finished");
-		}
-
-		
-
-		
+	
+	private Stage primaryStage;
+	private Gui gui = new Gui();
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
+		this.primaryStage.setTitle("Ovladani rychlosti vlakna");
+		this.primaryStage.setScene (tabulka());
+		this.primaryStage.setMinHeight(350);
+		this.primaryStage.setMinWidth(450);
+		this.primaryStage.show();			
 	}
+	
+	public Scene tabulka() {
+		Scene scene = new Scene(tab(), 200, 200);		
+		return scene;
+	}
+	/**
+	 * usporadani okna
+	 * @return borderPane
+	 */
+	public Parent tab() {
+		BorderPane rootPane = new BorderPane();
+		rootPane.setTop(gui.info());
+		rootPane.setCenter(gui.button());
+		rootPane.setBottom(gui.slide());
+				
+		return rootPane;
+	}
+	
+	
+	
+ public static void main(String[] args){		
+	 launch(args);					
+	}
+
+
 }
