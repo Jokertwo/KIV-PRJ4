@@ -92,7 +92,7 @@ public class ManageOfThread {
 		try {
 		    System.out.println("attempt to shutdown executor");
 		    ex.shutdown();
-		    ex.awaitTermination(4, TimeUnit.SECONDS);
+		    ex.awaitTermination(2, TimeUnit.SECONDS);
 		}
 		catch (InterruptedException e) {
 		    System.err.println("tasks interrupted");
