@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -6,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
+import javafx.stage.FileChooser;
 
 
 
@@ -25,7 +27,8 @@ public class ManageOfThread {
 			private TakeFromQueue k = null;
 	//pocitadlo bezicich vlaken	
 			private CountDownLatch latch;
-			
+	//soubor ze ktereho se ma ist
+			private File file = null;
 			
 			//kontruktor
 		public ManageOfThread(OTime otime) {
@@ -52,43 +55,46 @@ public class ManageOfThread {
 		//fonta kam se ukladaji nactene hodnoty ye souboru
 		q = new LinkedBlockingQueue<>();
 		
-		//trida ktera cte ze souboru
-		d = new Read("Data2.txt",q);
-		
-		//trida ktera vybira ulozene veci z fronty
-		k = new TakeFromQueue();
-		
-		//preda pocitadlo
-		d.setCountDownLatch(latch);
-		
-		//priradi z ktere fronty se ma vybirat
-		k.setQueue(q);
-		
-		//preda pocitadlo
-		k.setCountDownLatch(latch);
-		
-		//priradi tridu Observer
-		k.setobserver(otime);
+		if(chooseFile()){
+			//trida ktera cte ze souboru
+			d = new Read(file,q);
 			
-		//spusteni nacitani ze souboru
-		ex.execute(d);
+			//trida ktera vybira ulozene veci z fronty
+			k = new TakeFromQueue();
 			
-		//spusteni tridy odebirajici polozky z fronty
-		ex.execute(k);
-	
-		//po dobehnuti obou vlaken ukoneci ExecutorService
-		ex.execute(new Runnable() {
+			//preda pocitadlo
+			d.setCountDownLatch(latch);
 			
-			@Override
-			public void run() {
-				try{
-					latch.await();
-				}catch(InterruptedException ex){
-					ex.printStackTrace();
+			//priradi z ktere fronty se ma vybirat
+			k.setQueue(q);
+			
+			//preda pocitadlo
+			k.setCountDownLatch(latch);
+			
+			//priradi tridu Observer
+			k.setobserver(otime);
+				
+			//spusteni nacitani ze souboru
+			ex.execute(d);
+				
+			//spusteni tridy odebirajici polozky z fronty
+			ex.execute(k);
+		
+			//po dobehnuti obou vlaken ukoneci ExecutorService
+			ex.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					try{
+						latch.await();
+					}catch(InterruptedException ex){
+						ex.printStackTrace();
+					}
+					finish();
 				}
-				finish();
-			}
-		});
+			});
+		}
+		
 	
 	}	
 	
@@ -111,5 +117,27 @@ public class ManageOfThread {
 		    ex.shutdownNow();
 		    System.out.println("shutdown finished");
 		}
+	}
+	
+	/**
+	 * vybere soubor ze ktereho se ma cist
+	 * @return vraci true pokud byl zvolen soubor
+	 */
+	private boolean chooseFile(){
+		FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Vyber soubor");
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+            );
+        fileChooser.getExtensionFilters().addAll(
+        		 new FileChooser.ExtensionFilter("Text", "*.txt")
+        		);
+        
+        file = fileChooser.showOpenDialog(Main.primaryStage);
+        
+        if(file != null){
+        	return true;
+        }
+        return false;
 	}
 }

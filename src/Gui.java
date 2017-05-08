@@ -73,8 +73,13 @@ public class Gui {
 		
 		return box;
 	}
+	
+	/**
+	 * tlacitko pro vytvoreni testovaciho souboru
+	 * @return vraci tlacitko vcetne nastavene udalosti po kliknuti
+	 */
 	private Node createButton(){
-		Button create = new Button("Create file");
+		Button create = new Button("Vytvor soubor");
 		create.setOnAction(event->{
 			man.create();
 		});
