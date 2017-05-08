@@ -14,9 +14,9 @@ import javafx.scene.layout.VBox;
 
 public class Gui {
 	private final String MS = " ms";
-	private final String DESCRIPTION = "Cas po kterou bude vlakno 'spat'";
+	private final String DESCRIPTION = "Cas po ktery bude vlakno 'spat'";
 	//slider
-	private Slide time = new Slide(0,200,50);
+	private Slide time = new Slide(1,200,50);
 	//observer pro ulozeni hodnoty
 	public OTime otime = new OTime((int)time.getValue());
 	//popisi jednotlivych akci

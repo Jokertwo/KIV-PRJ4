@@ -5,7 +5,8 @@ import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.Random;
 
-
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 
@@ -76,13 +77,20 @@ public class CreateFile implements Runnable{
 			}
 		}
 	}
-	
+	private void alertDone(){
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Hotovo");
+		alert.setHeaderText("Dokonceni souboru");
+		alert.setContentText("Soubor " + file.getName() + " byl vytvoren.");
+		alert.show();
+	}
 	
 	@Override
 	public void run() {	
 		if(chooseFile()){
 			if(getNumberOfLines()){
 				create();
+				alertDone();
 			};
 		}
 		

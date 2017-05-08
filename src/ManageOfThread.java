@@ -104,19 +104,14 @@ public class ManageOfThread {
 	 */
 	private void finish(){
 		try {
-		    System.out.println("attempt to shutdown executor");
 		    ex.shutdown();
-		    ex.awaitTermination(2, TimeUnit.SECONDS);
+		    ex.awaitTermination(1, TimeUnit.SECONDS);
 		}
 		catch (InterruptedException e) {
 		    System.err.println("tasks interrupted");
 		}
 		finally {
-		    if (!ex.isTerminated()) {
-		        System.err.println("cancel non-finished tasks");
-		    }
 		    ex.shutdownNow();
-		    System.out.println("shutdown finished");
 		}
 	}
 	
