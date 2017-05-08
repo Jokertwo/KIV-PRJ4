@@ -15,8 +15,6 @@ public class Gui {
 	private Slide time = new Slide(0,200,50);
 	//observer pro ulozeni hodnoty
 	public OTime otime = new OTime((int)time.getValue());
-	//trida vybirajici z fronty
-	private TakeFromQueue k = new TakeFromQueue();
 	//popisi jednotlivych akci
 	public static Label sum,big,low,count,aver,val,err;
 	
@@ -30,8 +28,8 @@ public class Gui {
 		sum = new Label();
 		big = new Label();
 		
-		sum.textProperty().bind(k.Ssum);
-		big.textProperty().bind(k.Shigh);
+		sum.textProperty().bind(TakeFromQueue.Ssum);
+		big.textProperty().bind(TakeFromQueue.Shigh);
 		
 		box.setSpacing(5);
 		
@@ -47,8 +45,8 @@ public class Gui {
 		aver = new Label();
 		
 		
-		low.textProperty().bind(k.Slow);
-		aver.textProperty().bind(k.Saver);
+		low.textProperty().bind(TakeFromQueue.Slow);
+		aver.textProperty().bind(TakeFromQueue.Saver);
 		
 		
 		box.setSpacing(5);
@@ -62,8 +60,8 @@ public class Gui {
 		count  = new Label();
 		err = new Label();
 		
-		count.textProperty().bind(k.Scount);
-		err.textProperty().bind(k.Serror);
+		count.textProperty().bind(TakeFromQueue.Scount);
+		err.textProperty().bind(TakeFromQueue.Serror);
 		
 		box.getChildren().addAll(count,err);
 		
@@ -123,32 +121,10 @@ public class Gui {
 	public Node button(){
 		Button bt = new Button("Test");
 		bt.setOnAction(event ->{
-			
-			ManageOfThread man = new ManageOfThread(k, otime);
+			//trida starajici se o vlakna
+			ManageOfThread man = new ManageOfThread(otime);
 			man.start();
-			/**
-			//fonta kam se ukladaji nactene hodnoty ye souboru
-			q = new LinkedBlockingQueue<>();
-		
-			//exekutor kde se nastavi pocet jader pouzivanych pro praci 
-			ex = Executors.newFixedThreadPool(4);
-			
-			//trida ktera cte ze souboru
-			d = new Read("Data2.txt",q);
-			
-			//trida ktera vybira ulozene veci ze souboru
-			k.setQueue(q);
-			
-			//priradi tridu Observer
-			k.setobserver(otime);
-			
-			//spusteni nacitani ze souboru
-			ex.execute(d);
-			//spusteni tridy odebirajici polozky z fronty
-			ex.execute(k);
-			*/
-			
-		});
+			});
 		return bt;
 	}
 }

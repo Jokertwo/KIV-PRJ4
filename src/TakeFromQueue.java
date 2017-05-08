@@ -41,18 +41,18 @@ public class TakeFromQueue implements Runnable{
 	private static final String ERROR = "Pocet chyb : ";
 	
 	
-	//promene pro aktualizovani lablu s informacemi
-	public StringProperty Ssum = new SimpleStringProperty(SUM + "---");
-	public StringProperty Shigh = new SimpleStringProperty(HIGHEST + "---");
-	public StringProperty Slow = new SimpleStringProperty(LOWEST + "---");
-	public StringProperty Scount = new SimpleStringProperty(COUNT + "---");
-	public StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
-	public StringProperty Serror = new SimpleStringProperty(ERROR + "---");
+	//promene pro aktualizovani labelu s informacemi
+	public static StringProperty Ssum = new SimpleStringProperty(SUM + "---");
+	public static StringProperty Shigh = new SimpleStringProperty(HIGHEST + "---");
+	public static StringProperty Slow = new SimpleStringProperty(LOWEST + "---");
+	public static StringProperty Scount = new SimpleStringProperty(COUNT + "---");
+	public static StringProperty Saver = new SimpleStringProperty(AVERAGE + "---");
+	public static StringProperty Serror = new SimpleStringProperty(ERROR + "---");
 	
 	
 	/**
 	 * nastavi frontu ze ktere se bude cist
-	 * @param fronta BlockingQueue<String>
+	 * @param fronta BlockingQueue
 	 */
 	public void setQueue(BlockingQueue<String> fronta){
 		this.fronta = fronta;
@@ -137,6 +137,7 @@ public class TakeFromQueue implements Runnable{
 	public void run() {
 			
 		try{
+			//vynuluje hodnoty
 			reset();
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){

@@ -2,7 +2,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+
 
 
 
@@ -19,9 +19,9 @@ public class ManageOfThread {
 			private OTime otime = null;
 			private TakeFromQueue k = null;
 			
-		public ManageOfThread(TakeFromQueue k,OTime otime) {
+			
+		public ManageOfThread(OTime otime) {
 			this.otime = otime;
-			this.k = k;
 		}	
 			
 	
@@ -30,6 +30,8 @@ public class ManageOfThread {
 		 * a zaroven vybirani z fronty a nasledne zpracovani kazdeho prvku
 		 */
 	public void start(){
+		
+		
 		//fonta kam se ukladaji nactene hodnoty ye souboru
 		q = new LinkedBlockingQueue<>();
 	
@@ -38,6 +40,11 @@ public class ManageOfThread {
 		
 		//trida ktera cte ze souboru
 		d = new Read("Data2.txt",q);
+		
+		k = new TakeFromQueue();
+		
+		//trida ktera ukonci bezici vlakna
+		Shutdown down = new Shutdown(ex, q);
 		
 		//trida ktera vybira ulozene veci ze souboru
 		k.setQueue(q);
@@ -49,6 +56,8 @@ public class ManageOfThread {
 		ex.execute(d);
 		//spusteni tridy odebirajici polozky z fronty
 		ex.execute(k);
+		//spusteni ukoncijici tridy
+		ex.execute(down);
 		
 		
 	}
@@ -86,26 +95,7 @@ public class ManageOfThread {
 	
 	*/
 	
-	/**
-	 * ukonci bezici vlakna
-	 */
-	private void finish(){
-		try {
-		    System.out.println("attempt to shutdown executor");
-		    ex.shutdown();
-		    ex.awaitTermination(5, TimeUnit.SECONDS);
-		}
-		catch (InterruptedException e) {
-		    System.err.println("tasks interrupted");
-		}
-		finally {
-		    if (!ex.isTerminated()) {
-		        System.err.println("cancel non-finished tasks");
-		    }
-		    ex.shutdownNow();
-		    System.out.println("shutdown finished");
-		}
-	}
+	
 
 	
 	

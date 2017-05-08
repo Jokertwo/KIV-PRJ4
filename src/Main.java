@@ -13,41 +13,34 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("Inventar obuvi");
+		this.primaryStage.setTitle("Ovladani rychlosti vlakna");
 		this.primaryStage.setScene (tabulka());
 		this.primaryStage.setMinHeight(350);
 		this.primaryStage.setMinWidth(450);
-		this.primaryStage.show();	
-		
+		this.primaryStage.show();			
 	}
 	
 	public Scene tabulka() {
-		Scene scene = new Scene(tab(), 200, 200);
-		
+		Scene scene = new Scene(tab(), 200, 200);		
 		return scene;
 	}
 	/**
-	 * usporadani tabulky
-	 * @return
+	 * usporadani okna
+	 * @return borderPane
 	 */
 	public Parent tab() {
 		BorderPane rootPane = new BorderPane();
 		rootPane.setTop(gui.info());
 		rootPane.setCenter(gui.button());
 		rootPane.setBottom(gui.slide());
-		
-		
+				
 		return rootPane;
 	}
 	
 	
 	
- public static void main(String[] args){
-		
-	 launch(args);
-	 
-		
-					
+ public static void main(String[] args){		
+	 launch(args);					
 	}
 
 
