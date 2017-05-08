@@ -3,7 +3,9 @@ import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -33,7 +35,9 @@ public class TakeFromQueue implements Runnable{
 	private double average;
 	//pocet znaku ktere nebyly cisla
 	private int errors;
-	
+	//pocet radku v souboru
+	private float numberOfLines;
+	//pocitadlo
 	private CountDownLatch latch = null;
 	
 	private static final String HIGHEST = "Nejvetsi : ";
@@ -54,7 +58,8 @@ public class TakeFromQueue implements Runnable{
 	public static StringProperty Serror = new SimpleStringProperty(ERROR + "---");
 	//promena pro nastaveni disable tlacitka
 	public static BooleanProperty Sdisable = new SimpleBooleanProperty(false);
-	
+	//promena pro progresBar
+	public static FloatProperty Sprogres = new SimpleFloatProperty(0);
 	/**
 	 * nastavi frontu ze ktere se bude cist
 	 * @param fronta BlockingQueue
@@ -144,6 +149,7 @@ public class TakeFromQueue implements Runnable{
 		this.highest = Integer.MIN_VALUE;
 		this.lower = Integer.MAX_VALUE;
 		this.errors = 0;
+		this.numberOfLines = 0;
 	}
 	
 	@Override
@@ -157,6 +163,9 @@ public class TakeFromQueue implements Runnable{
 		try{
 			//vynuluje hodnoty
 			reset();
+			
+			numberOfLines = Integer.parseInt(fronta.take());
+			System.out.println(numberOfLines);
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
 				
@@ -174,7 +183,9 @@ public class TakeFromQueue implements Runnable{
 						Shigh.set(HIGHEST + Integer.toString( highest));
 						Ssum.set(SUM + Long.toString(sum));
 						Saver.set(AVERAGE + Double.toString(average));
-						Serror.set(ERROR + Integer.toString(errors)); 
+						Serror.set(ERROR + Integer.toString(errors));
+						Sprogres.set(count/numberOfLines);
+						
 					}
 				});
 				

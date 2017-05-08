@@ -41,10 +41,6 @@ public class Read implements Runnable
 		return;
 	}
 	
-	public boolean isAlive(){
-		return Thread.currentThread().isAlive();
-	}
-	
 	public void setCountDownLatch(CountDownLatch latch){
 		this.latch = latch;
 	}
@@ -56,7 +52,7 @@ public class Read implements Runnable
 		String radka;
 		
 		try{
-			fr = new FileReader(file);
+			fr = new FileReader("Data2.txt");
 			in = new BufferedReader(fr);
 			//cte dokud nedojde az na konec souboru
 			while((radka = in.readLine()) != null){

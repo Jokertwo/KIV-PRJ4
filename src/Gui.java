@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -85,6 +86,17 @@ public class Gui {
 		});
 		return create;
 	}
+	
+	private Node pogress(){
+		
+		ProgressIndicator pi = new ProgressIndicator();
+		
+		pi.progressProperty().bind(TakeFromQueue.Sprogres);
+		
+		
+		
+		return pi;
+	}
 	/**
 	 * Slider kterym se ovlada doba po kterou vlakno ceka
 	 * @return
@@ -113,7 +125,7 @@ public class Gui {
 		//zobrazeni hodnots na slideru
 		time.setShowTickLabels(true);
 		
-		box.getChildren().addAll(descri,time,val);
+		box.getChildren().addAll(pogress(),time,descri,val);
 		
 		return box;
 	}

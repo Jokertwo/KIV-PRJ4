@@ -18,7 +18,7 @@ public class ManageOfThread {
 	//fonta kam se ukladaji nactene hodnoty ye souboru
 			private	BlockingQueue<String> q = null;		
 	//exekutor kde se nastavi pocet jader pouzivanych pro praci 
-			private ExecutorService ex = Executors.newFixedThreadPool(4);
+			private ExecutorService ex = Executors.newFixedThreadPool(10);
 	//trida ktera nacita ze souboru
 			private Read d = null;
 	//Observer integer s ulozenou hodnotou 
@@ -49,13 +49,15 @@ public class ManageOfThread {
 		 * a zaroven vybirani z fronty a nasledne zpracovani kazdeho prvku
 		 */
 	public void start(){
-		//pocitadlo
-		latch = new CountDownLatch(2);
 		
-		//fonta kam se ukladaji nactene hodnoty ye souboru
-		q = new LinkedBlockingQueue<>();
 		
-		if(chooseFile()){
+			//pocitadlo
+			latch = new CountDownLatch(2);
+			
+			//fonta kam se ukladaji nactene hodnoty ye souboru
+			q = new LinkedBlockingQueue<>();
+			
+		
 			//trida ktera cte ze souboru
 			d = new Read(file,q);
 			
@@ -93,9 +95,6 @@ public class ManageOfThread {
 					finish();
 				}
 			});
-		}
-		
-	
 	}	
 	
 	/**
