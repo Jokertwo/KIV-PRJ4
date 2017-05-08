@@ -6,22 +6,27 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class Gui {
+	private final String MS = " ms";
+	private final String DESCRIPTION = "Cas po kterou bude vlakno 'spat'";
 	//slider
 	private Slide time = new Slide(0,200,50);
 	//observer pro ulozeni hodnoty
 	public OTime otime = new OTime((int)time.getValue());
 	//popisi jednotlivych akci
-	public static Label sum,big,low,count,aver,val,err;
+	private Label sum,big,low,count,aver,val,err,descri;
 	//buton---tlacitko
-	public ButtonStart bt = new ButtonStart("Test");
+	public ButtonStart bt = new ButtonStart("Spust");
+	//trida starajici se o vlakna
+	private ManageOfThread man = new ManageOfThread(otime);
 	public ODisable dis = new ODisable(false);
 	
-	public boolean test = false;
+	
 	
 	private Node left(){
 		VBox box = new VBox();
@@ -68,7 +73,13 @@ public class Gui {
 		
 		return box;
 	}
-	
+	private Node createButton(){
+		Button create = new Button("Create file");
+		create.setOnAction(event->{
+			man.create();
+		});
+		return create;
+	}
 	/**
 	 * Slider kterym se ovlada doba po kterou vlakno ceka
 	 * @return
@@ -79,14 +90,13 @@ public class Gui {
 		box.setAlignment(Pos.CENTER);
 		VBox.setMargin(time, new Insets(20));
 		
-		val = new Label(Integer.toString((int)time.getValue()));
-		
-		
+		val = new Label(Integer.toString((int)time.getValue())+ MS);
+		descri = new Label(DESCRIPTION);	
 		//nastaveni listener na slider
 		time.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov,
 	                Number old_val, Number new_val) {
-	                    val.setText(Integer.toString(new_val.intValue()));
+	                    val.setText(Integer.toString(new_val.intValue())+ MS);
 	                    otime.setValue(new_val.intValue());
 	            }
 		});
@@ -98,11 +108,15 @@ public class Gui {
 		//zobrazeni hodnots na slideru
 		time.setShowTickLabels(true);
 		
-		box.getChildren().addAll(time,val);
+		box.getChildren().addAll(descri,time,val);
 		
 		return box;
 	}
 	
+	/**
+	 * Posklada infomacni label a vlozi do HBoxu
+	 * @return vraci HBox
+	 */
 	public Node info(){
 		HBox box = new HBox();
 		
@@ -119,20 +133,27 @@ public class Gui {
 	 * 
 	 * @return button
 	 */
-	public Node button(){
+	private Node button(){
 		
 		bt.setOnAction(event ->{
-			//trida starajici se o vlakna
-			ManageOfThread man = new ManageOfThread(otime);
+			
+			//spusteni vlaken na pozadi
 			man.start();		
 			});
 		dis.addObserver(bt);
 		
-		bt.disableProperty().bind(TakeFromQueue.Sdisable);
-		
-		
-		
+		bt.disableProperty().bind(TakeFromQueue.Sdisable);		
 		return bt;
+	}
+	
+	public Node buttons(){
+		HBox box = new HBox();
+		
+		box.getChildren().addAll(button(),createButton());
+		box.setAlignment(Pos.CENTER);
+		box.setSpacing(10);
+		
+		return box;
 	}
 }
 	

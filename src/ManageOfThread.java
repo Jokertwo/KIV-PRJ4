@@ -14,22 +14,32 @@ public class ManageOfThread {
 	
 	
 	//fonta kam se ukladaji nactene hodnoty ye souboru
-			private	BlockingQueue<String> q = null;
-		
+			private	BlockingQueue<String> q = null;		
 	//exekutor kde se nastavi pocet jader pouzivanych pro praci 
 			private ExecutorService ex = Executors.newFixedThreadPool(4);
 	//trida ktera nacita ze souboru
 			private Read d = null;
+	//Observer integer s ulozenou hodnotou 
 			private OTime otime = null;
+	//trida ktera vybira prvky z fronty
 			private TakeFromQueue k = null;
-			
+	//pocitadlo bezicich vlaken	
 			private CountDownLatch latch;
 			
 			
 			//kontruktor
 		public ManageOfThread(OTime otime) {
 			this.otime = otime;
-		}	
+		}
+	
+		/**
+		 * spusti vlakno ktere vytvori soubor
+		 * ze ktereho pujde cist
+		 */
+	public void create(){	
+		CreateFile cr = new CreateFile();	
+		Platform.runLater(cr);		
+	}
 	
 		/**
 		 * spusteni asymchornich vlaken starajici se o nacitani do fronty ze souboru
@@ -59,17 +69,14 @@ public class ManageOfThread {
 		
 		//priradi tridu Observer
 		k.setobserver(otime);
-		
-		
-		
+			
 		//spusteni nacitani ze souboru
 		ex.execute(d);
-		
-		
+			
 		//spusteni tridy odebirajici polozky z fronty
 		ex.execute(k);
-			
-		
+	
+		//po dobehnuti obou vlaken ukoneci ExecutorService
 		ex.execute(new Runnable() {
 			
 			@Override
