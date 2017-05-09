@@ -16,7 +16,7 @@ public class Gui {
 	private final String MS = " ms";
 	private final String DESCRIPTION = "Cas po ktery bude vlakno 'spat'";
 	//slider
-	private Slide time = new Slide(1,200,50);
+	private Slide time = new Slide(0,200,50);
 	//observer pro ulozeni hodnoty
 	public OTime otime = new OTime((int)time.getValue());
 	//popisi jednotlivych akci
@@ -100,7 +100,7 @@ public class Gui {
 	}
 	/**
 	 * Slider kterym se ovlada doba po kterou vlakno ceka
-	 * @return
+	 * @return vraci Vbox s kompomentami
 	 */
 	public Node slide(){
 		VBox box = new VBox();
@@ -164,6 +164,10 @@ public class Gui {
 		return bt;
 	}
 	
+	/**
+	 * slozi dve talcitka vedle sebe
+	 * @return Hboxs
+	 */
 	public Node buttons(){
 		HBox box = new HBox();
 		

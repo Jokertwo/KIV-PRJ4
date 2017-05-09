@@ -26,8 +26,9 @@ public class Read implements Runnable
 	
 	/**
 	 * kontruktor
-	 * @param jmenoSouboru jmeno souboru ze ktereho se ma cist
+	 * @param file File soubor ze ktereho se ma cist
 	 * @param fronta fronta kam se budou nactene informace ukladat
+	 * 
 	 */
 	public Read(File file,BlockingQueue<String> fronta){
 		this.file = file;
