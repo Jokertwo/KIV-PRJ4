@@ -14,7 +14,8 @@ import javafx.scene.layout.VBox;
 
 public class Gui {
 	private final String MS = " ms";
-	private final String DESCRIPTION = "Cas po ktery bude vlakno 'spat'";
+	private final String DESCRIPTION = "Čas po který bude vlákno 'spát'";
+	private final String CREATE_BUTTON = "Vytvoř soubor";
 	//slider
 	private Slide time = new Slide(0,200,50);
 	//observer pro ulozeni hodnoty
@@ -22,7 +23,7 @@ public class Gui {
 	//popisi jednotlivych akci
 	private Label sum,big,low,count,aver,val,err,descri;
 	//buton---tlacitko
-	public ButtonStart bt = new ButtonStart("Spust");
+	public ButtonStart bt = new ButtonStart("Spusť");
 	//trida starajici se o vlakna
 	private ManageOfThread man = null;
 	public ODisable dis = new ODisable(false);
@@ -80,7 +81,7 @@ public class Gui {
 	 * @return vraci tlacitko vcetne nastavene udalosti po kliknuti
 	 */
 	private Node createButton(){
-		Button create = new Button("Vytvor soubor");
+		Button create = new Button(CREATE_BUTTON);
 		create.setOnAction(event->{
 			man = new ManageOfThread(otime);
 			man.create();
