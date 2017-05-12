@@ -1,5 +1,14 @@
 import java.util.Observable;
 
+/**
+ * Třída použitá jako prostřeník pro výměnu informací mezí Slider ze třídy Gui.java
+ * a třídou TakeFromQueue
+ * 
+ * @author Jokertwo
+ *
+ */
+
+
 public class OTime extends Observable{
 
 	private int value = 0;
