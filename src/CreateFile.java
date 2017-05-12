@@ -15,16 +15,25 @@ public class CreateFile implements Runnable{
 	
 	private int numberOfLines;
 	private File file = null;
+	private final String DIALOG_TITLE = "Počet řádků";
+	private final String DIALOG_HEADER_T = "Zadajte počet řádků, kolik chcete vygenerovat";
+	private final String DIALOG_CONTENT_T = "Zadávejte pouze čísla:";
 	
+	private final String FILECHOOSER_TITLE = "Vytvoř soubor";
+	
+	private final String ALERT_TITLE = "Hotovo";
+	private final String ALERT_HEADER_T = "Dokonceni souboru";
+	private final String ALERT_CONTENT_1 = "Soubor ";
+	private final String ALERT_CONTENT_2 = " byl vytvořen";
 	
 	
 	
 	
 	private boolean getNumberOfLines(){
 		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Pocet radku");
-		dialog.setHeaderText("Zadajte pocet radku kolik chcete vygenerovat");
-		dialog.setContentText("Zadavejte pouze cisla:");
+		dialog.setTitle(DIALOG_TITLE);
+		dialog.setHeaderText(DIALOG_HEADER_T);
+		dialog.setContentText(DIALOG_CONTENT_T);
 		
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(number -> {
@@ -43,7 +52,7 @@ public class CreateFile implements Runnable{
 	
 	private boolean chooseFile(){
 		FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Create file");
+        fileChooser.setTitle(FILECHOOSER_TITLE);
     
         fileChooser.getExtensionFilters().addAll(
         		 new FileChooser.ExtensionFilter("Text", "*.txt")
@@ -79,9 +88,9 @@ public class CreateFile implements Runnable{
 	}
 	private void alertDone(){
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Hotovo");
-		alert.setHeaderText("Dokonceni souboru");
-		alert.setContentText("Soubor " + file.getName() + " byl vytvoren.");
+		alert.setTitle(ALERT_TITLE);
+		alert.setHeaderText(ALERT_HEADER_T);
+		alert.setContentText(ALERT_CONTENT_1 + file.getName() + ALERT_CONTENT_2);
 		alert.show();
 	}
 	
