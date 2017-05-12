@@ -8,12 +8,13 @@ public class Main extends Application{
 	
 	
 	public static Stage primaryStage;
+	private final String STAGE_TITLE = "Ovládání rychlosti vlákna";
 	private Gui gui = new Gui();
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("Ovladani rychlosti vlakna");
+		this.primaryStage.setTitle(STAGE_TITLE);
 		this.primaryStage.setScene (tabulka());
 		this.primaryStage.setMinHeight(350);
 		this.primaryStage.setMinWidth(450);
