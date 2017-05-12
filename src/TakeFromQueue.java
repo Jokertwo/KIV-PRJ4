@@ -40,12 +40,12 @@ public class TakeFromQueue implements Runnable{
 	//pocitadlo
 	private CountDownLatch latch = null;
 	
-	private static final String HIGHEST = "Nejvetsi : ";
-	private static final String LOWEST = "Nejmensi : ";
-	private static final String SUM = "Soucet : ";
-	private static final String AVERAGE = "Prumer : ";
-	private static final String COUNT = "Pocet cisel : ";
-	private static final String ERROR = "Pocet chyb : ";
+	private static final String HIGHEST = "Největší : ";
+	private static final String LOWEST = "Nejmenší : ";
+	private static final String SUM = "Součet : ";
+	private static final String AVERAGE = "Průměr : ";
+	private static final String COUNT = "Počet čísel : ";
+	private static final String ERROR = "Počet chyb : ";
 	
 	
 	
@@ -165,7 +165,6 @@ public class TakeFromQueue implements Runnable{
 			reset();
 			
 			numberOfLines = Integer.parseInt(fronta.take());
-			System.out.println(numberOfLines);
 			//vybira dokud fronta neni prazdna a zaroven je nacteny cely soubor
 			while(Read.done != true || !fronta.isEmpty()){
 				
